@@ -12,6 +12,8 @@ forumone::php::modules:
   - mysql
   - pecl-xdebug
   - gd
+  - devel
+  - pecl-oauth
 
 php::ini: 
   display_errors: "On"
