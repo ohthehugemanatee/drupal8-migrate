@@ -8,6 +8,7 @@
 namespace Drupal\oauth\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Path\AliasManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -42,9 +43,9 @@ class OAuthSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Form builder.
+   * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state){
+  public function buildForm(array $form, FormStateInterface $form_state) {
 
     $config = $this->configFactory->get('oauth.settings');
 
@@ -71,10 +72,9 @@ class OAuthSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-
-    if (!intval($form_state['values']['request_token_lifetime'], 10)) {
+    if (!intval($form_state->getValue('request_token_lifetime'), 10)) {
       \Drupal::formBuilder()->setErrorByName('oauth_request_token_lifetime', $form_state, t('The request token lifetime must be a non-zero integer value.'));
     }
   }
@@ -82,7 +82,7 @@ class OAuthSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
     $config = $this->configFactory->get('oauth.settings')
