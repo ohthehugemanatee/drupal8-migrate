@@ -1,5 +1,5 @@
 $platform = 'drupal'
-$host = 'f1dev'
+$host = 'drupal8'
 
 case $::operatingsystem {
   /(?i:redhat|centos)/ : {
