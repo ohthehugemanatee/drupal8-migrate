@@ -8,6 +8,7 @@ namespace Drupal\twitter\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\MapArray;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Configure twitter settings for this site.
@@ -24,7 +25,7 @@ class TwitterSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $twitter_config = $this->configFactory->get('twitter.settings');
     $form['import'] = array(
       '#type' => 'checkbox',
@@ -97,7 +98,7 @@ class TwitterSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $twitter_config = $this->configFactory->get('twitter.settings');
     $twitter_config
       ->set('import', $form_state['values']['import'])
