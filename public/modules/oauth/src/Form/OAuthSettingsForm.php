@@ -74,7 +74,7 @@ class OAuthSettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    if (!intval($form_state->getValue('request_token_lifetime'), 10)) {
+    if (!intval($form_state->getValue('request_token_lifetime'))) {
       \Drupal::formBuilder()->setErrorByName('oauth_request_token_lifetime', $form_state, t('The request token lifetime must be a non-zero integer value.'));
     }
   }
@@ -85,10 +85,16 @@ class OAuthSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $config = $this->configFactory->get('oauth.settings')
-      ->set('request_token_lifetime',$form_state['values']['request_token_lifetime'])
-      ->set('login_path',$form_state['values']['login_path'])
-    ->save();
+    $config = $this->configFactory->getEditable('oauth.settings')
+      ->set('request_token_lifetime', $form_state->getValue('request_token_lifetime', 10))
+      ->set('login_path', $form_state->getValue('login_path'))
+      ->save();
+  }
+
+  protected function getEditableConfigNames() {
+    return [
+      'oauth.settings',
+    ];
   }
 
 }
