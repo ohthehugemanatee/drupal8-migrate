@@ -8,6 +8,7 @@
 namespace Drupal\oauth\Form;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Path\AliasManagerInterface;
@@ -53,9 +54,9 @@ class OAuthAddConsumerForm extends FormBase {
   }
 
   /**
-   * Form builder.
+   * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $form['save'] = array(
       '#type' => 'submit',
       '#value' => $this->t('Add'),
@@ -67,7 +68,7 @@ class OAuthAddConsumerForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state['values'];
     $account = \Drupal::currentUser();
 

@@ -8,13 +8,14 @@
 namespace Drupal\oauth\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an oauth_consumer deletion confirmation form.
  */
-class OAuthDeleteConsumerForm extends ConfirmFormBase implements ContainerInjectionInterface {
+abstract class OAuthDeleteConsumerForm extends ConfirmFormBase implements ContainerInjectionInterface {
 
   /**
    * {@inheritdoc}
@@ -53,7 +54,7 @@ class OAuthDeleteConsumerForm extends ConfirmFormBase implements ContainerInject
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $cid = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, $cid = NULL) {
     $form['cid'] = array(
       '#type' => 'hidden',
       '#value' => $cid,
@@ -65,7 +66,7 @@ class OAuthDeleteConsumerForm extends ConfirmFormBase implements ContainerInject
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $account = \Drupal::currentUser();
     $cid = $form_state['values'];
     db_delete('oauth_consumer')
