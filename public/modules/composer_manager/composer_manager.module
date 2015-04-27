@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Allows contributed modules to require external libraries via Composer.
+ */
+
+/**
+ * Returns whether Composer Manager has been initialized.
+ *
+ * @param string $root
+ *   The app root.
+ *
+ * @return bool
+ *   True if Composer Manager has been initialized, false otherwise.
+ */
+function composer_manager_initialized($root = NULL) {
+  $root = $root ?: \Drupal::root();
+  return file_exists($root . '/core/composer.core.json');
+}
+
+/**
+ * Initializes Composer Manager.
+ *
+ * This is done by making a backup of core's composer.json, then altering it
+ * to register the 'composer drupal-update' command. Executed by drush or
+ * init.sh because they runs under the current user (and not the web server
+ * user like Drupal), giving them a higher chance of success.
+ *
+ * @param string $root
+ *   The app root.
+ *
+ * @see \Drupal\composer_manager\PackageManager::getCorePackage()
+ */
+function composer_manager_initialize($root = NULL) {
+  $root = $root ?: \Drupal::root();
+  if (!file_exists($root . '/core/composer.core.json')) {
+    $success = copy($root . '/core/composer.json', $root . '/core/composer.core.json');
+    if (!$success) {
+      throw new \RuntimeException('Could not copy core/composer.json to core/composer.core.json');
+    }
+  }
+
+  $module_path = str_replace($root . '/', '../', __DIR__);
+  $package = \Drupal\composer_manager\JsonFile::read($root . '/core/composer.json');
+  $package['autoload']['psr-4']['Drupal\\composer_manager\\Composer\\'] = $module_path . '/src/Composer';
+  $package['scripts'] = array(
+    'drupal-rebuild' => 'Drupal\\composer_manager\\Composer\\Command::rebuild',
+    'drupal-update' => 'Drupal\\composer_manager\\Composer\\Command::update',
+  );
+  \Drupal\composer_manager\JsonFile::write($root . '/core/composer.json', $package);
+}

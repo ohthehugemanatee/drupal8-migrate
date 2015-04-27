@@ -1,0 +1,82 @@
+<?php
+/**
+ * @file
+ * Installation and schema related functions for the OAuth module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function oauth_requirements($phase) {
+  $requirements = array();
+  $oauth_available = class_exists('\\OauthProvider');
+
+  $requirements['oauth_pecl'] = array(
+    'title' => t('OAuth'),
+    'value' => $oauth_available ? t('OAuth PECL library installed') : t('OAuth PECL library not installed'),
+  );
+
+  if (!$oauth_available) {
+    $requirements['oauth_pecl'] += array(
+      'severity' => REQUIREMENT_ERROR,
+      'description' => t("OAuth module requires the <a href='!oauth_url' target='_blank'>PECL OAuth</a> library.",
+        array('!oauth_url' => 'http://www.php.net/manual/en/book.oauth.php')),
+    );
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_schema().
+ */
+function oauth_schema() {
+  $schema = array();
+
+  $schema['oauth_consumer'] = array(
+    'description' => 'Keys and secrets for OAuth consumers, both those provided by this site and other sites.',
+    'fields' => array(
+      'cid' => array(
+        'type'        => 'serial',
+        'description' => 'Primary ID field for the table. Not used for anything except internal lookups.',
+        'not null'    => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'The application owner.',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
+      'key_hash' => array(
+        'description' => 'SHA1-hash of consumer_key.',
+        'type'        => 'char',
+        'length'      => 40,
+        'not null'    => TRUE,
+      ),
+      // Key is a reserved word in MySQL so lets avoid that
+      'consumer_key' => array(
+        'description' => 'Consumer key.',
+        'type'        => 'text',
+        'not null'    => TRUE,
+      ),
+      'consumer_secret' => array(
+        'description' => 'Consumer secret.',
+        'type'        => 'text',
+        'not null'    => TRUE,
+      ),
+    ),
+    'primary key' => array('cid'),
+    'indexes' => array(
+      'key_hash' => array('key_hash'),
+       'uid' => array('uid'),
+    ),
+    'foreign keys' => array(
+      'users' => array(
+        'table' => 'users',
+        'columns' => array('uid' => 'uid'),
+      ),
+    ),
+  );
+
+  return $schema;
+}

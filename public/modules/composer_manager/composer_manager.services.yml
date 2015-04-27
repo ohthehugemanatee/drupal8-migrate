@@ -1,0 +1,8 @@
+services:
+  composer_manager.root_package_builder:
+    class: Drupal\composer_manager\RootPackageBuilder
+    arguments: ['@app.root']
+
+  composer_manager.package_manager:
+    class: Drupal\composer_manager\PackageManager
+    arguments: ['@app.root', '@composer_manager.root_package_builder']

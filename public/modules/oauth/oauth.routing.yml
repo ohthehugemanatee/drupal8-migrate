@@ -1,0 +1,28 @@
+oauth.admin_form:
+  path: '/admin/config/services/oauth'
+  defaults:
+    _form: 'Drupal\oauth\Form\OAuthSettingsForm'
+  requirements:
+    _permission: 'administer oauth'
+
+oauth.user_consumer:
+  path: 'user/{user}/oauth/consumer'
+  defaults:
+    _content: 'Drupal\oauth\Controller\OAuthController::consumers'
+  requirements:
+    _permission: 'access own consumers'
+
+oauth.user_consumer_add:
+  path: 'oauth/consumer/add'
+  defaults:
+    _form: 'Drupal\oauth\Form\OAuthAddConsumerForm'
+    _title: 'Add an OAuth Consumer'
+  requirements:
+    _permission: 'access own consumers'
+
+oauth.user_consumer_delete:
+  path: 'oauth/consumer/delete/{cid}'
+  defaults:
+    _form: 'Drupal\oauth\Form\OAuthDeleteConsumerForm'
+  requirements:
+    _permission: 'access own consumers'
