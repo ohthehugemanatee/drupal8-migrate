@@ -1,0 +1,41 @@
+id: broadband
+label: Broadband statistics
+migration_groups:
+  - US Census
+source:
+  plugin: csv
+  path: '/Users/ohthehugemanatee/Sites/drupal8/import/ACS_13_1YR_B28002_with_ann.csv'
+
+process:
+  field_state_term: GEO.display-label
+  gid: GEO.id2
+  field_cable_modems: HD01_VD07
+  field_fiber: HD01_VD10
+
+
+  label: name
+  permissions:
+    -
+      plugin: static_map
+      source: permissions
+      bypass: true
+      map:
+        'use PHP for block visibility': 'use PHP for settings'
+        'administer site-wide contact form': 'administer contact forms'
+        'post comments without approval': 'skip comment approval'
+        'edit own blog entries' : 'edit own blog content'
+        'edit any blog entry' : 'edit any blog content'
+        'delete own blog entries' : 'delete own blog content'
+        'delete any blog entry' : 'delete any blog content'
+        'create forum topics' : 'create forum content'
+        'delete any forum topic' : 'delete any forum content'
+        'delete own forum topics' : 'delete own forum content'
+        'edit any forum topic' : 'edit any forum content'
+        'edit own forum topics' : 'edit own forum content'
+    - plugin: system_update_7000
+    - plugin: node_update_7008
+    - plugin: flatten
+    - plugin: filter_format_permission
+destination:
+  plugin: entity:node
+  entity_type: internet_access
