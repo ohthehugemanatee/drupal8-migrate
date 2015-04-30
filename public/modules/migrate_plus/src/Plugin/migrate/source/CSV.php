@@ -31,7 +31,10 @@ class CSV extends SourcePluginBase {
   }
 
   public function getIDs() {
-    return $this->configuration['keys'];
+    foreach ($this->configuration['keys'] as $key) {
+      $ids[$key]['type'] = 'string';
+    }
+    return $ids;
   }
 
   /**
