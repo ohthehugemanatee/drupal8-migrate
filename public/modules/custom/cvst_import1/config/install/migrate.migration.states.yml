@@ -9,7 +9,8 @@ source:
   fields:
     - Id2
     - Geography
-  key: Id2
+  keys:
+    - Id2
 
 process:
   label: Geography
