@@ -31,14 +31,14 @@ class MigrateExecutable implements MigrateExecutableInterface {
    *
    * @var int
    */
-  protected $successesSinceFeedback;
+  protected $successesSinceFeedback = 0;
 
   /**
    * The number of rows that were successfully processed.
    *
    * @var int
    */
-  protected $totalSuccesses;
+  protected $totalSuccesses = 0;
 
   /**
    * Status of one row.
@@ -57,7 +57,7 @@ class MigrateExecutable implements MigrateExecutableInterface {
    *
    * @var int
    */
-  protected $totalProcessed;
+  protected $totalProcessed = 0;
 
   /**
    * The queued messages not yet saved.
@@ -602,6 +602,46 @@ class MigrateExecutable implements MigrateExecutableInterface {
    */
   protected function getTimeElapsed() {
     return time() - REQUEST_TIME;
+  }
+
+  /**
+   * Allows access to protected successesSinceFeedback property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getSuccessesSinceFeedback() {
+    return $this->successesSinceFeedback;
+  }
+
+  /**
+   * Allows access to protected totalSuccesses property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getTotalSuccesses() {
+    return $this->totalSuccesses;
+  }
+
+  /**
+   * Allows access to protected totalProcessed property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getTotalProcessed() {
+    return $this->totalProcessed;
+  }
+
+  /**
+   * Allows access to protected processedSinceFeedback property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getProcessedSinceFeedback() {
+    return $this->processedSinceFeedback;
   }
 
   /**

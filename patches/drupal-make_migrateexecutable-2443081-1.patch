@@ -1,0 +1,128 @@
+diff --git a/core/modules/migrate/src/MigrateExecutable.php b/core/modules/migrate/src/MigrateExecutable.php
+index f33781e..be38b07 100644
+--- a/core/modules/migrate/src/MigrateExecutable.php
++++ b/core/modules/migrate/src/MigrateExecutable.php
+@@ -31,14 +31,14 @@ class MigrateExecutable implements MigrateExecutableInterface {
+    *
+    * @var int
+    */
+-  protected $successesSinceFeedback;
++  protected $successesSinceFeedback = 0;
+ 
+   /**
+    * The number of rows that were successfully processed.
+    *
+    * @var int
+    */
+-  protected $totalSuccesses;
++  protected $totalSuccesses = 0;
+ 
+   /**
+    * Status of one row.
+@@ -57,7 +57,7 @@ class MigrateExecutable implements MigrateExecutableInterface {
+    *
+    * @var int
+    */
+-  protected $totalProcessed;
++  protected $totalProcessed = 0;
+ 
+   /**
+    * The queued messages not yet saved.
+@@ -605,6 +605,46 @@ protected function getTimeElapsed() {
+   }
+ 
+   /**
++   * Allows access to protected successesSinceFeedback property.
++   *
++   * @return int
++   *   The value of the protected property.
++   */
++  public function getSuccessesSinceFeedback() {
++    return $this->successesSinceFeedback;
++  }
++
++  /**
++   * Allows access to protected totalSuccesses property.
++   *
++   * @return int
++   *   The value of the protected property.
++   */
++  public function getTotalSuccesses() {
++    return $this->totalSuccesses;
++  }
++
++  /**
++   * Allows access to protected totalProcessed property.
++   *
++   * @return int
++   *   The value of the protected property.
++   */
++  public function getTotalProcessed() {
++    return $this->totalProcessed;
++  }
++
++  /**
++   * Allows access to protected processedSinceFeedback property.
++   *
++   * @return int
++   *   The value of the protected property.
++   */
++  public function getProcessedSinceFeedback() {
++    return $this->processedSinceFeedback;
++  }
++
++  /**
+    * Takes an Exception object and both saves and displays it.
+    *
+    * Pulls in additional information on the location triggering the exception.
+diff --git a/core/modules/migrate/tests/src/Unit/TestMigrateExecutable.php b/core/modules/migrate/tests/src/Unit/TestMigrateExecutable.php
+index f26bc56..11f22c1 100644
+--- a/core/modules/migrate/tests/src/Unit/TestMigrateExecutable.php
++++ b/core/modules/migrate/tests/src/Unit/TestMigrateExecutable.php
+@@ -77,46 +77,6 @@ public function getMaxExecTime() {
+   }
+ 
+   /**
+-   * Allows access to protected successesSinceFeedback property.
+-   *
+-   * @return int
+-   *   The value of the protected property.
+-   */
+-  public function getSuccessesSinceFeedback() {
+-    return $this->successesSinceFeedback;
+-  }
+-
+-  /**
+-   * Allows access to protected totalSuccesses property.
+-   *
+-   * @return int
+-   *   The value of the protected property.
+-   */
+-  public function getTotalSuccesses() {
+-    return $this->totalSuccesses;
+-  }
+-
+-  /**
+-   * Allows access to protected totalProcessed property.
+-   *
+-   * @return int
+-   *   The value of the protected property.
+-   */
+-  public function getTotalProcessed() {
+-    return $this->totalProcessed;
+-  }
+-
+-  /**
+-   * Allows access to protected processedSinceFeedback property.
+-   *
+-   * @return int
+-   *   The value of the protected property.
+-   */
+-  public function getProcessedSinceFeedback() {
+-    return $this->processedSinceFeedback;
+-  }
+-
+-  /**
+    * Allows access to protected maxExecTimeExceeded method.
+    *
+    * @return bool
