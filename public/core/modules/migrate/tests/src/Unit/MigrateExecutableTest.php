@@ -121,9 +121,10 @@ class MigrateExecutableTest extends MigrateTestCase {
 
     $this->assertSame(MigrationInterface::RESULT_COMPLETED, $this->executable->import());
 
-    $counters = $this->executable->getCounters();
-    $this->assertSame(1, $counters->get('successes'));
-    $this->assertSame(1, $counters->get('processed'));
+    $this->assertSame(1, $this->executable->getSuccessesSinceFeedback());
+    $this->assertSame(1, $this->executable->getTotalSuccesses());
+    $this->assertSame(1, $this->executable->getTotalProcessed());
+    $this->assertSame(1, $this->executable->getProcessedSinceFeedback());
   }
 
   /**
@@ -170,9 +171,10 @@ class MigrateExecutableTest extends MigrateTestCase {
 
     $this->assertSame(MigrationInterface::RESULT_COMPLETED, $this->executable->import());
 
-    $counters = $this->executable->getCounters();
-    $this->assertSame(1, $counters->get('successes'));
-    $this->assertSame(1, $counters->get('processed'));
+    $this->assertSame(1, $this->executable->getSuccessesSinceFeedback());
+    $this->assertSame(1, $this->executable->getTotalSuccesses());
+    $this->assertSame(1, $this->executable->getTotalProcessed());
+    $this->assertSame(1, $this->executable->getProcessedSinceFeedback());
   }
 
   /**

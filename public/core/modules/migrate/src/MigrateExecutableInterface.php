@@ -45,13 +45,6 @@ interface MigrateExecutableInterface {
   public function getTimeLimit();
 
   /**
-   * Return an object containing current execution statistics for a migration.
-   *
-   * @return \Drupal\migrate\MigrationCounters
-   */
-  public function getCounters();
-
-  /**
    * Passes messages through to the map class.
    *
    * @param string $message

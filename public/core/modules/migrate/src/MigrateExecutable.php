@@ -27,6 +27,20 @@ class MigrateExecutable implements MigrateExecutableInterface {
   protected $migration;
 
   /**
+   * The number of successfully imported rows since feedback was given.
+   *
+   * @var int
+   */
+  protected $successesSinceFeedback;
+
+  /**
+   * The number of rows that were successfully processed.
+   *
+   * @var int
+   */
+  protected $totalSuccesses;
+
+  /**
    * Status of one row.
    *
    * The value is a MigrateIdMapInterface::STATUS_* constant, for example:
@@ -35,6 +49,15 @@ class MigrateExecutable implements MigrateExecutableInterface {
    * @var int
    */
   protected $sourceRowStatus;
+
+  /**
+   * The number of rows processed.
+   *
+   * The total attempted, whether or not they were successful.
+   *
+   * @var int
+   */
+  protected $totalProcessed;
 
   /**
    * The queued messages not yet saved.
@@ -56,13 +79,6 @@ class MigrateExecutable implements MigrateExecutableInterface {
    * @var array
    */
   protected $options;
-
-  /**
-   * An object for tracking statistics.
-   *
-   * @var \Drupal\migrate\MigrationCounters
-   */
-  protected $counters;
 
   /**
    * The PHP max_execution_time.
@@ -98,6 +114,13 @@ class MigrateExecutable implements MigrateExecutableInterface {
    * @var array
    */
   protected $sourceIdValues;
+
+  /**
+   * The number of rows processed since feedback was given.
+   *
+   * @var int
+   */
+  protected $processedSinceFeedback = 0;
 
   /**
    * The PHP memory_limit expressed in bytes.
@@ -160,14 +183,10 @@ class MigrateExecutable implements MigrateExecutableInterface {
    *
    * @throws \Drupal\migrate\MigrateException
    */
-  public function __construct(MigrationInterface $migration, MigrateMessageInterface $message, MigrationCountersInterface $counters = NULL) {
+  public function __construct(MigrationInterface $migration, MigrateMessageInterface $message) {
     $this->migration = $migration;
     $this->message = $message;
     $this->migration->getIdMap()->setMessage($message);
-    if (is_null($counters)) {
-      $counters = new MigrationCounters();
-    }
-    $this->counters = $counters;
     // Record the memory limit in bytes
     $limit = trim(ini_get('memory_limit'));
     if ($limit == '-1') {
@@ -271,7 +290,8 @@ class MigrateExecutable implements MigrateExecutableInterface {
             if ($destination_id_values !== TRUE) {
               $id_map->saveIdMapping($row, $destination_id_values, $this->sourceRowStatus, $this->rollbackAction);
             }
-            $this->counters->increment('successes');
+            $this->successesSinceFeedback++;
+            $this->totalSuccesses++;
           }
           else {
             $id_map->saveIdMapping($row, array(), MigrateIdMapInterface::STATUS_FAILED, $this->rollbackAction);
@@ -292,7 +312,8 @@ class MigrateExecutable implements MigrateExecutableInterface {
           $this->handleException($e);
         }
       }
-      $this->counters->increment('processed');
+      $this->totalProcessed++;
+      $this->processedSinceFeedback++;
       if ($high_water_property = $this->migration->get('highWaterProperty')) {
         $this->migration->saveHighWater($row->getSourceProperty($high_water_property['name']));
       }
@@ -581,13 +602,6 @@ class MigrateExecutable implements MigrateExecutableInterface {
    */
   protected function getTimeElapsed() {
     return time() - REQUEST_TIME;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCounters() {
-    return $this->counters;
   }
 
   /**

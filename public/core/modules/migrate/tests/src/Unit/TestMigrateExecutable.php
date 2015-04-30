@@ -77,6 +77,46 @@ class TestMigrateExecutable extends MigrateExecutable {
   }
 
   /**
+   * Allows access to protected successesSinceFeedback property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getSuccessesSinceFeedback() {
+    return $this->successesSinceFeedback;
+  }
+
+  /**
+   * Allows access to protected totalSuccesses property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getTotalSuccesses() {
+    return $this->totalSuccesses;
+  }
+
+  /**
+   * Allows access to protected totalProcessed property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getTotalProcessed() {
+    return $this->totalProcessed;
+  }
+
+  /**
+   * Allows access to protected processedSinceFeedback property.
+   *
+   * @return int
+   *   The value of the protected property.
+   */
+  public function getProcessedSinceFeedback() {
+    return $this->processedSinceFeedback;
+  }
+
+  /**
    * Allows access to protected maxExecTimeExceeded method.
    *
    * @return bool
