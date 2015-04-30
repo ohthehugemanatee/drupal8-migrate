@@ -20,7 +20,7 @@ use Drupal\migrate\Plugin\migrate\source\SourcePluginBase;
  *   id = "csv"
  * )
  */
-class CSVSource extends SourcePluginBase {
+class CSV extends SourcePluginBase {
 
   public function initializeIterator() {
     $file = new \SplFileObject($this->configuration['path']);
