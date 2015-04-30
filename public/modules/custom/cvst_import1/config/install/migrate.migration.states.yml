@@ -15,5 +15,5 @@ process:
   label: Geography
 
 destination:
-  plugin: entity:term
+  plugin: entity:taxonomy_term
   entity_type: state
