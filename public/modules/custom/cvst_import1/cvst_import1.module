@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Contains cvst_import1.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function cvst_import1_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the cvst_import1 module.
+    case 'help.page.cvst_import1':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('CvsT import 1') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cvst_import1_theme() {
+  $theme = [];
+
+  return $theme;
+}
