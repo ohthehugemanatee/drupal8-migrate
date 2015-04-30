@@ -31,7 +31,7 @@ class CSV extends SourcePluginBase {
   }
 
   public function getIDs() {
-    return $this->configuration['key'];
+    return $this->configuration['keys'];
   }
 
   /**
