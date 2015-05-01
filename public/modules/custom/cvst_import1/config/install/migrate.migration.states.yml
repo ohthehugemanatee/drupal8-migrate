@@ -13,8 +13,11 @@ source:
     - Id2
 
 process:
-  label: Geography
+  name: Geography
+  vid:
+    -
+      plugin: default_value
+      default_value: state
 
 destination:
   plugin: entity:taxonomy_term
-  entity_type: state
