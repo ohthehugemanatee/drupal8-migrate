@@ -26,7 +26,10 @@ class CSV extends SourcePluginBase {
   public function initializeIterator() {
     $file = new \SplFileObject($this->configuration['path']);
     $file->setFlags(SplFileObject::READ_CSV);
-    $file->setCsvControl(',');
+    $delimiter = !empty($this->configuration['delimiter']) ? $this->configuration['delimiter'] : ',';
+    $enclosure = !empty($this->configuration['enclosure']) ? $this->configuration['enclosure'] : '"';
+    $escape = !empty($this->configuration['escape']) ? $this->configuration['escape'] : '\\';
+    $file->setCsvControl($delimiter, $enclosure, $escape);
     return $file;
   }
 
@@ -100,30 +103,21 @@ class CSV extends SourcePluginBase {
      * migration will add via other means (e.g., prepareRow()).
      */
     $path = $this->configuration['path'];
-    $csvcolumns = isset($this->configuration['csvcolumns']) ? $this->configuration['csvcolumns'] : array();
-    $options = isset($this->configuration['options']) ? $this->configuration['options'] : array();
-    $fields = isset($this->configuration['fields']) ? $this->configuration['fields'] : array();
+    $this->options = isset($this->configuration['options']) ? $this->configuration['options'] : array();
+    $this->fields = isset($this->configuration['fields']) ? $this->configuration['fields'] : array();
 
-    // Also set header rows from the migrate configuration.
-    $options['header_rows'] = isset($this->configuration['header_rows']) ? $this->configuration['header_rows'] : array();
-    $this->file = $path;
-    if (!empty($options['header_rows'])) {
-      $this->headerRows = $options['header_rows'];
-    }
-    else {
-      $this->headerRows = 0;
-    }
-    $this->options = $options;
-    $this->fields = $fields;
-    // fgetcsv specific options
-    foreach (array('length' => NULL, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\') as $key => $default) {
-      $this->fgetcsv[$key] = isset($options[$key]) ? $options[$key] : $default;
-    }
+    // Set header rows from the migrate configuration.
+    $this->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
+
+    // Get the iterator for file operations.
+    $iterator = $this->getIterator();
+
+    // Figure out what CSV columns we have.
     // One can either pass in an explicit list of column names to use, or if we have
     // a header row we can use the names from that
-    if ($this->headerRows && empty($csvcolumns)) {
+    if ($this->headerRows && empty($this->configuration['csvcolumns'])) {
       $this->csvcolumns = array();
-      $this->csvHandle = fopen($this->file, 'r');
+
       // Skip all but the last header
       for ($i = 0; $i < $this->headerRows - 1; $i++) {
         $this->getNextLine();
@@ -134,8 +128,6 @@ class CSV extends SourcePluginBase {
         $header = trim($header);
         $this->csvcolumns[] = array($header, $header);
       }
-      fclose($this->csvHandle);
-      $this->csvHandle = NULL;
     }
     else {
       $this->csvcolumns = $csvcolumns;
@@ -249,17 +241,9 @@ class CSV extends SourcePluginBase {
   }
 
   protected function getNextLine() {
-    // escape parameter was added in PHP 5.3.
-    if (version_compare(phpversion(), '5.3', '<')) {
-      $row = fgetcsv($this->csvHandle, $this->fgetcsv['length'],
-        $this->fgetcsv['delimiter'], $this->fgetcsv['enclosure']);
-    }
-    else {
-      $row = fgetcsv($this->csvHandle, $this->fgetcsv['length'],
-        $this->fgetcsv['delimiter'], $this->fgetcsv['enclosure'],
-        $this->fgetcsv['escape']);
-    }
-    return $row;
+    $iterator = $this->getIterator();
+    $iterator->next();
+    return $iterator->current();
   }
 
 
