@@ -43,9 +43,12 @@ class CSV extends SourcePluginBase {
 
   public function getIDs() {
     $ids = array();
-    foreach ($this->keys as $key) {
+    foreach ($this->configuration['keys'] as $key) {
       $ids[$key]['type'] = 'string';
     }
+    /*foreach ($this->keys as $key) {
+      $ids[$key]['type'] = 'string';
+    }*/
     return $ids;
   }
 
@@ -106,16 +109,17 @@ class CSV extends SourcePluginBase {
       $row = $this->getNextLine();
       foreach ($row as $key => $header) {
         $header = trim($header);
-        $this->csvColumns[] = array($header, $header);
+        $this->getIterator()->csvColumns[] = array($header, $header);
 
         // If it's the key column, store the column number.
+        /*
         if (in_array($header, $this->configuration['keys'])) {
           $this->keys[] = $key;
-        }
+        }*/
       }
     }
     else {
-      $this->csvColumns = $this->configuration['csvColumns'];
+      $this->getIterator()->csvColumns = $this->configuration['csvColumns'];
     }
   }
 
@@ -137,7 +141,7 @@ class CSV extends SourcePluginBase {
    */
   public function fields() {
     $fields = array();
-    foreach ($this->csvColumns as $values) {
+    foreach ($this->getIterator()->csvColumns as $values) {
       $fields[$values[0]] = $values[1];
     }
 
@@ -191,24 +195,7 @@ class CSV extends SourcePluginBase {
    */
   public function getNextRow() {
     $row = $this->getNextLine();
-    if ($row) {
-      // only use rows specified in $this->csvColumns().
-      $row = array_intersect_key($row, $this->csvColumns);
-      // Set meaningful keys for the columns mentioned in $this->csvColumns().
-      foreach ($this->csvColumns as $int => $values) {
-        list($key, $description) = $values;
-        // Copy value to more descriptive string based key and then unset original.
-        $row[$key] = isset($row[$int]) ? $row[$int] : NULL;
-        unset($row[$int]);
-      }
-      $row['csvrownum'] = $this->rowNumber++;
-      return (object)$row;
-    }
-    else {
-      // There is no next row, so close the iterator.
-      $this->iterator = NULL;
-      return NULL;
-    }
+
   }
 
   protected function getNextLine() {
