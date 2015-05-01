@@ -42,7 +42,8 @@ class CSV extends SourcePluginBase {
   }
 
   public function getIDs() {
-    foreach ($this->configuration['keys'] as $key) {
+    $ids = array();
+    foreach ($this->keys as $key) {
       $ids[$key]['type'] = 'string';
     }
     return $ids;
@@ -55,6 +56,13 @@ class CSV extends SourcePluginBase {
    * @var array
    */
   protected $fields = array();
+
+  /**
+   * List of key fields, as indexes.
+   *
+   * @var array
+   */
+  protected $keys = array();
 
   /**
    * The number of rows in the CSV file before the data starts.
@@ -87,7 +95,6 @@ class CSV extends SourcePluginBase {
     if (empty($this->configuration['path'])) {
       return new MigrateException('You must give the path to the source CSV file.');
     }
-    $path = $this->configuration['path'];
     $this->options = isset($this->configuration['options']) ? $this->configuration['options'] : array();
     $this->fields = isset($this->configuration['fields']) ? $this->configuration['fields'] : array();
 
@@ -106,9 +113,14 @@ class CSV extends SourcePluginBase {
       }
 
       $row = $this->getNextLine();
-      foreach ($row as $header) {
+      foreach ($row as $key => $header) {
         $header = trim($header);
         $this->csvcolumns[] = array($header, $header);
+
+        // If it's the key column, store the column number.
+        if (in_array($header, $this->configuration['keys'])) {
+          $this->keys[] = $key;
+        }
       }
     }
     else {
