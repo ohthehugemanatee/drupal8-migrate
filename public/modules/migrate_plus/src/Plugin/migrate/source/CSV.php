@@ -7,6 +7,7 @@
 namespace Drupal\migrate_plus\Plugin\migrate\source;
 
 use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\migrate\source\SourcePluginBase;
 use SplFileObject;
 
@@ -102,6 +103,9 @@ class CSV extends SourcePluginBase {
      * the default descriptions, or to add additional source fields which the
      * migration will add via other means (e.g., prepareRow()).
      */
+    if (empty($this->configuration['path'])) {
+      return new MigrateException('You must give the path to the source CSV file.');
+    }
     $path = $this->configuration['path'];
     $this->options = isset($this->configuration['options']) ? $this->configuration['options'] : array();
     $this->fields = isset($this->configuration['fields']) ? $this->configuration['fields'] : array();
@@ -140,7 +144,7 @@ class CSV extends SourcePluginBase {
    * @return string
    */
   public function __toString() {
-    return $this->file;
+    return $this->configuration['path'];
   }
 
   /**
@@ -172,22 +176,16 @@ class CSV extends SourcePluginBase {
     // If the data may have embedded newlines, the file line count won't reflect
     // the number of CSV records (one record will span multiple lines). We need
     // to scan with fgetcsv to get the true count.
-    if (!empty($this->options['embedded_newlines'])) {
-      $this->csvHandle = fopen($this->file, 'r');
-      // Skip all but the last header
-      for ($i = 0; $i < $this->headerRows; $i++) {
-        fgets($this->csvHandle);
-      }
-      $count = 0;
-      while ($this->getNextLine()) {
-        $count++;
-      }
-      fclose($this->csvHandle);
-      $this->csvHandle = NULL;
+    $iterator = $this->getIterator();
+
+    // If there are embedded newlines, we have to use the Iterator's count.
+    if (!empty($this->configuration['embedded_newlines'])) {
+      $iterator = $this->getIterator();
+      $count = iterator_count($iterator);
     }
     else {
-      // TODO. If this takes too much time/memory, use exec('wc -l')
-      $count = count(file($this->file));
+      // Shortcut to count number of lines in a file.
+      $count = count(file($this->configuration['path']));
       $count -= $this->headerRows;
     }
     return $count;
