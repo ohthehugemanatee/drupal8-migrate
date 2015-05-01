@@ -49,9 +49,9 @@ class TermReference extends ProcessPluginBase implements ContainerFactoryPluginI
     );
   }
 
-  protected function getTermId($name) {
+  protected function getTermId($name, $vid) {
     if (!$this->terms) {
-      $tree = $this->termStorage->loadTree('state', 0, NULL, TRUE);
+      $tree = $this->termStorage->loadTree($vid, 0, NULL, TRUE);
       foreach ($tree as $term) {
         $this->terms[$term->name->value] = $term->id();
       }
@@ -63,7 +63,7 @@ class TermReference extends ProcessPluginBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    return $this->getTermId($value);
+    return $this->getTermId($value, $this->configuration['vid']);
   }
 
 }
