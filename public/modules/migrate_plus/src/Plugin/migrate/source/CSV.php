@@ -76,22 +76,8 @@ class CSV extends SourcePluginBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
-    /**
-     * Get the variables we used to get called with out of $configuration.
-     * string $path
-     * The path to the source file
-     *
-     * array $csvcolumns
-     * Keys are integers. values are array(field name, description).
-     *
-     * array $options
-     * Options applied to this source.
-     *
-     * @param array $fields
-     * Optional - keys are field names, values are descriptions. Use to override
-     * the default descriptions, or to add additional source fields which the
-     * migration will add via other means (e.g., prepareRow()).
-     */
+
+    // Path is required.
     if (empty($this->configuration['path'])) {
       return new MigrateException('You must give the path to the source CSV file.');
     }
