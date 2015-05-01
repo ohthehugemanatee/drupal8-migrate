@@ -9,7 +9,7 @@ namespace Drupal\migrate_plus\Plugin\migrate\source;
 use Drupal\migrate\Entity\MigrationInterface;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\migrate\source\SourcePluginBase;
-use SplFileObject;
+use Drupal\migrate_plus\CSVFileObject;
 
 
 /**
@@ -25,12 +25,19 @@ use SplFileObject;
 class CSV extends SourcePluginBase {
 
   public function initializeIterator() {
-    $file = new \SplFileObject($this->configuration['path']);
-    $file->setFlags(SplFileObject::READ_CSV);
+
+    // File handler using our custom header-rows-respecting extension of SPLFileObject.
+    $file = new CSVFileObject($this->configuration['path']);
+
+    // Set basics of CSV behavior based on configuration.
     $delimiter = !empty($this->configuration['delimiter']) ? $this->configuration['delimiter'] : ',';
     $enclosure = !empty($this->configuration['enclosure']) ? $this->configuration['enclosure'] : '"';
     $escape = !empty($this->configuration['escape']) ? $this->configuration['escape'] : '\\';
     $file->setCsvControl($delimiter, $enclosure, $escape);
+
+    // Tell it if there are header rows.
+    $file->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
+
     return $file;
   }
 
@@ -41,11 +48,6 @@ class CSV extends SourcePluginBase {
     return $ids;
   }
 
-  /**
-   * The name of the key field in the CSV.
-   * @var NULL
-   */
-  protected $IDField = NULL;
 
   /**
    * List of available source fields.
@@ -55,32 +57,11 @@ class CSV extends SourcePluginBase {
   protected $fields = array();
 
   /**
-   * Parameters for the fgetcsv() call.
-   *
-   * @var array
-   */
-  protected $fgetcsv = array();
-
-  /**
-   * File handle for the CSV file being iterated.
-   *
-   * @var resource
-   */
-  protected $csvHandle = NULL;
-
-  /**
    * The number of rows in the CSV file before the data starts.
    *
    * @var integer
    */
   protected $headerRows = 0;
-
-  /**
-   * The current row/line number in the CSV file.
-   *
-   * @var integer
-   */
-  protected $rowNumber;
 
   /**
    * {@inheritdoc}
@@ -113,9 +94,6 @@ class CSV extends SourcePluginBase {
     // Set header rows from the migrate configuration.
     $this->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
 
-    // Get the iterator for file operations.
-    $iterator = $this->getIterator();
-
     // Figure out what CSV columns we have.
     // One can either pass in an explicit list of column names to use, or if we have
     // a header row we can use the names from that
@@ -134,7 +112,7 @@ class CSV extends SourcePluginBase {
       }
     }
     else {
-      $this->csvcolumns = $csvcolumns;
+      $this->csvcolumns = $this->configuration['csvcolumns'];
     }
   }
 
@@ -176,12 +154,10 @@ class CSV extends SourcePluginBase {
     // If the data may have embedded newlines, the file line count won't reflect
     // the number of CSV records (one record will span multiple lines). We need
     // to scan with fgetcsv to get the true count.
-    $iterator = $this->getIterator();
 
     // If there are embedded newlines, we have to use the Iterator's count.
     if (!empty($this->configuration['embedded_newlines'])) {
-      $iterator = $this->getIterator();
-      $count = iterator_count($iterator);
+      $count = iterator_count($this->getIterator());
     }
     else {
       // Shortcut to count number of lines in a file.
@@ -197,13 +173,7 @@ class CSV extends SourcePluginBase {
    * @return void
    */
   public function performRewind() {
-    // Close any previously-opened handle
-    if (!is_null($this->csvHandle)) {
-      fclose($this->csvHandle);
-      $this->csvHandle = NULL;
-    }
     // Load up the first row, skipping the header(s) if necessary
-    $this->csvHandle = fopen($this->file, 'r');
     for ($i = 0; $i < $this->headerRows; $i++) {
       $this->getNextLine();
     }
@@ -232,16 +202,15 @@ class CSV extends SourcePluginBase {
       return (object)$row;
     }
     else {
-      fclose($this->csvHandle);
-      $this->csvHandle = NULL;
+      // There is no next row, so close the iterator.
+      $this->iterator = NULL;
       return NULL;
     }
   }
 
   protected function getNextLine() {
-    $iterator = $this->getIterator();
-    $iterator->next();
-    return $iterator->current();
+    $this->getIterator()->next();
+    return $this->getIterator()->current();
   }
 
 
