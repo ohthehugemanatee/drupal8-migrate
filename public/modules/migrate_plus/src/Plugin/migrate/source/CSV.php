@@ -72,6 +72,11 @@ class CSV extends SourcePluginBase {
   protected $headerRows = 0;
 
   /**
+   * The human-readable column headers, keyed by column index in the CSV.
+   */
+  public $csvColumns = array();
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration) {
@@ -90,8 +95,8 @@ class CSV extends SourcePluginBase {
     // Figure out what CSV columns we have.
     // One can either pass in an explicit list of column names to use, or if we have
     // a header row we can use the names from that
-    if ($this->headerRows && empty($this->configuration['csvcolumns'])) {
-      $this->csvcolumns = array();
+    if ($this->headerRows && empty($this->configuration['csvColumns'])) {
+      $this->csvColumns = array();
 
       // Skip all but the last header
       for ($i = 0; $i < $this->headerRows - 1; $i++) {
@@ -101,7 +106,7 @@ class CSV extends SourcePluginBase {
       $row = $this->getNextLine();
       foreach ($row as $key => $header) {
         $header = trim($header);
-        $this->csvcolumns[] = array($header, $header);
+        $this->csvColumns[] = array($header, $header);
 
         // If it's the key column, store the column number.
         if (in_array($header, $this->configuration['keys'])) {
@@ -110,7 +115,7 @@ class CSV extends SourcePluginBase {
       }
     }
     else {
-      $this->csvcolumns = $this->configuration['csvcolumns'];
+      $this->csvColumns = $this->configuration['csvColumns'];
     }
   }
 
@@ -132,7 +137,7 @@ class CSV extends SourcePluginBase {
    */
   public function fields() {
     $fields = array();
-    foreach ($this->csvcolumns as $values) {
+    foreach ($this->csvColumns as $values) {
       $fields[$values[0]] = $values[1];
     }
 
@@ -187,10 +192,10 @@ class CSV extends SourcePluginBase {
   public function getNextRow() {
     $row = $this->getNextLine();
     if ($row) {
-      // only use rows specified in $this->csvcolumns().
-      $row = array_intersect_key($row, $this->csvcolumns);
-      // Set meaningful keys for the columns mentioned in $this->csvcolumns().
-      foreach ($this->csvcolumns as $int => $values) {
+      // only use rows specified in $this->csvColumns().
+      $row = array_intersect_key($row, $this->csvColumns);
+      // Set meaningful keys for the columns mentioned in $this->csvColumns().
+      foreach ($this->csvColumns as $int => $values) {
         list($key, $description) = $values;
         // Copy value to more descriptive string based key and then unset original.
         $row[$key] = isset($row[$int]) ? $row[$int] : NULL;
