@@ -11,7 +11,10 @@ source:
 
 process:
   title: Geography
-  field_state_term: Geography
+  field_state_term:
+    -
+      plugin: term_reference
+      source: Geography
   field_cable_modems: Estimate; With an Internet subscription: - Cable modem:
   field_fiber: Estimate; With an Internet subscription: - Fiber-optic:
   type:
