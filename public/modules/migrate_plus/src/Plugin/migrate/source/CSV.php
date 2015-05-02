@@ -84,11 +84,14 @@ class CSV extends SourcePluginBase {
 
     // Path is required.
     if (empty($this->configuration['path'])) {
-      return new MigrateException('You must give the path to the source CSV file.');
+      return new MigrateException('You must declare the "path" to the source CSV file in your source settings.');
     }
-    $this->options = isset($this->configuration['options']) ? $this->configuration['options'] : array();
-    $this->fields = isset($this->configuration['fields']) ? $this->configuration['fields'] : array();
 
+    // Key field(s) are required
+    if (empty($this->configuration['keys'])) {
+      return new MigrateException('You must declare the "keys" the source CSV file in your source settings.');
+    }
+    
     // Set header rows from the migrate configuration.
     $this->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
 
