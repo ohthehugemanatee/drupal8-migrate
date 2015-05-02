@@ -91,7 +91,7 @@ class CSV extends SourcePluginBase {
     if (empty($this->configuration['keys'])) {
       return new MigrateException('You must declare the "keys" the source CSV file in your source settings.');
     }
-    
+
     // Set header rows from the migrate configuration.
     $this->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
 
@@ -110,15 +110,9 @@ class CSV extends SourcePluginBase {
       foreach ($row as $key => $header) {
         $header = trim($header);
         $this->getIterator()->csvColumns[] = array($header, $header);
-
-        // If it's the key column, store the column number.
-        /*
-        if (in_array($header, $this->configuration['keys'])) {
-          $this->keys[] = $key;
-        }*/
       }
     }
-    else {
+    elseif ($this->configuration['csvColumns']) {
       $this->getIterator()->csvColumns = $this->configuration['csvColumns'];
     }
   }
