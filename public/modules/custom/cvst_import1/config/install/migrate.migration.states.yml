@@ -2,6 +2,7 @@ id: states
 label: States
 migration_groups:
   - US Census
+
 source:
   plugin: csv
   path: '/vagrant/import/ACS_13_1YR_B28002_with_ann.csv'

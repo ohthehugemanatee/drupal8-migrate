@@ -16,7 +16,7 @@ process:
       plugin: term_reference
       source: Geography
       vid: state
-      
+
   field_cable_modems: Estimate; With an Internet subscription: - Cable modem:
   field_fiber: Estimate; With an Internet subscription: - Fiber-optic:
   type:
