@@ -46,9 +46,6 @@ class CSV extends SourcePluginBase {
     foreach ($this->configuration['keys'] as $key) {
       $ids[$key]['type'] = 'string';
     }
-    /*foreach ($this->keys as $key) {
-      $ids[$key]['type'] = 'string';
-    }*/
     return $ids;
   }
 
@@ -147,8 +144,8 @@ class CSV extends SourcePluginBase {
 
     // Any caller-specified fields with the same names as extracted fields will
     // override them; any others will be added
-    if ($this->fields) {
-      $fields = $this->fields + $fields;
+    if ($this->configuration['fields']) {
+      $fields = $this->configuration['fields'] + $fields;
     }
 
     return $fields;
