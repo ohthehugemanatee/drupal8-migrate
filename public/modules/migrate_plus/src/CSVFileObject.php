@@ -73,6 +73,8 @@ class CSVFileObject extends SplFileObject {
   public function __construct ($filename) {
     parent::__construct($filename);
     $this->setFlags(SplFileObject::READ_CSV);
+    // Set an initial value of the available columns to be field numbers.
+    $this->csvColumns = array_keys($this->current());
   }
 
 }
