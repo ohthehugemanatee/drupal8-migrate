@@ -1,0 +1,12 @@
+# The machine name of the group, by which it is referenced in individual
+# migrations.
+id: beer
+
+# A human-friendly label of the group, displayed in the UI.
+label: Beer Imports
+
+# Here we add any default configuration settings to be shared among all
+# migrations in the group.
+shared_configuration:
+  source:
+    key: default

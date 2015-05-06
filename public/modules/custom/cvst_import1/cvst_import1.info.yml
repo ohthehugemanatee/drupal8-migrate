@@ -1,0 +1,8 @@
+name: cvst_import1
+type: module
+description: CvsT import 1
+core: 8.x
+package: Other
+dependencies:
+  - migrate
+

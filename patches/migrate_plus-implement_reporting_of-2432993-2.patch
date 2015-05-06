@@ -1,0 +1,19 @@
+diff --git a/migrate_plus.drush.inc b/migrate_plus.drush.inc
+index f587e19..2281685 100644
+--- a/migrate_plus.drush.inc
++++ b/migrate_plus.drush.inc
+@@ -137,6 +137,14 @@ function drush_migrate_plus_migrate_import($migration_names = '') {
+       $executable = new MigrateExecutable($migration, $log);
+       // drush_op() provides --simulate support.
+       drush_op(array($executable, 'import'));
++      $num_processed = $executable->getTotalProcessed();
++      $num_successes = $executable->getTotalSuccesses();
++      drush_print(\Drupal::translation()->formatPlural($num_processed,
++        "Processed 1 item (!successes successfully) - done with '!name'",
++        "Processed !numitems items (!successes successfully) - done with '!name'",
++             array('!numitems' => $num_processed,
++                   '!successes' => $num_successes,
++                   '!name' => $migration_id)));
+     }
+   }
+ }

@@ -1,0 +1,29 @@
+id: broadband
+label: Broadband statistics
+migration_groups:
+  - US Census
+source:
+  plugin: csv
+  path: '/vagrant/import/ACS_13_1YR_B28002_with_ann.csv'
+  header_rows: 2
+  keys:
+    - Id2
+
+process:
+  title: Geography
+  field_state_term:
+    -
+      plugin: term_reference
+      source: Geography
+      vid: state
+
+  field_cable_modems: Estimate; With an Internet subscription: - Cable modem:
+  field_fiber: Estimate; With an Internet subscription: - Fiber-optic:
+  type:
+    -
+      plugin: default_value
+      default_value: internet_access
+
+destination:
+  plugin: entity:node
+  entity_type: internet_access
