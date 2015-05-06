@@ -52,7 +52,7 @@ class CSVFileObject extends SplFileObject {
         foreach ($this->csvColumns as $int => $values) {
           list($key, $description) = $values;
           // Copy value to more descriptive string based key and then unset original.
-          $row[$key] = isset($row[$int]) ? $row[$int] : NULL;
+          $row[$values] = isset($row[$int]) ? $row[$int] : NULL;
           unset($row[$int]);
         }
         return $row;

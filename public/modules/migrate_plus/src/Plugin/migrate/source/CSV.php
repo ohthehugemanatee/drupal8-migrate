@@ -108,7 +108,7 @@ class CSV extends SourcePluginBase {
       $row = $this->getNextLine();
       foreach ($row as $key => $header) {
         $header = trim($header);
-        $this->getIterator()->csvColumns[] = array($header, $header);
+        $this->getIterator()->csvColumns[] = $header;
       }
     }
     elseif ($this->configuration['csvColumns']) {
@@ -171,8 +171,13 @@ class CSV extends SourcePluginBase {
    * Implementation of MigrateSource::performRewind().
    *
    * @return void
-   */
+
   public function rewind() {
+    $this->idMap = $this->migration->getIdMap();
+    $this->numProcessed = 0;
+    $this->numIgnored = 0;
+    $this->getIterator()->rewind();
+    $this->next();
     // Load up the first row, skipping the header(s) if necessary
     for ($i = 0; $i < $this->headerRows; $i++) {
       $this->getNextLine();
