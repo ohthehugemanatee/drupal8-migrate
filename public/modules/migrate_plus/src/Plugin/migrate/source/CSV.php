@@ -93,16 +93,15 @@ class CSV extends SourcePluginBase {
     }
 
     // Set header rows from the migrate configuration.
-    $this->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
+    $this->getIterator()->headerRows = !empty($this->configuration['header_rows']) ? $this->configuration['header_rows'] : 0;
 
     // Figure out what CSV columns we have.
     // One can either pass in an explicit list of column names to use, or if we have
     // a header row we can use the names from that
-    if ($this->headerRows && empty($this->configuration['csvColumns'])) {
+    if ($this->configuration['header_rows'] && empty($this->configuration['csvColumns'])) {
       $this->csvColumns = array();
 
-      // Skip all but the last header
-      for ($i = 0; $i < $this->headerRows - 1; $i++) {
+      for ($i = 0; $i < $this->configuration['header_rows'] - 1; $i++) {
         $this->getNextLine();
       }
 
