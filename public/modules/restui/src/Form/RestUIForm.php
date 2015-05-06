@@ -9,7 +9,7 @@ namespace Drupal\restui\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Url;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\rest\Plugin\Type\ResourcePluginManager;
-use Drupal\Core\Routing\RouteBuilder;
+use Drupal\Core\Routing\RouteBuilderInterface;
 
 /**
  * Manage REST resources.
@@ -55,14 +55,14 @@ class RestUIForm extends ConfigFormBase {
   /**
    * The route builder used to rebuild all routes.
    *
-   * @var \Drupal\Core\Routing\RouteBuilder
+   * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
   protected $routeBuilder;
 
   /**
    * Constructs a \Drupal\user\RestForm object.
    */
-  public function __construct(ConfigFactory $config_factory, ModuleHandler $module_handler, array $authenticationProviders, array $formats, ResourcePluginManager $resourcePluginManager, RouteBuilder $routeBuilder) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandler $module_handler, array $authenticationProviders, array $formats, ResourcePluginManager $resourcePluginManager, RouteBuilderInterface $routeBuilder) {
     parent::__construct($config_factory);
     $this->moduleHandler = $module_handler;
     $this->authenticationProviders = $authenticationProviders;

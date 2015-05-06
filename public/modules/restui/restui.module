@@ -17,17 +17,6 @@ function restui_menu() {
 }
 
 /**
- * Implements hook_permission().
- */
-function restui_permission() {
-  return array(
-    'administer rest resources' => array(
-      'title' => t('Administer REST resources'),
-    ),
-  );
-}
-
-/**
  * Implements hook_theme().
  */
 function restui_theme() {

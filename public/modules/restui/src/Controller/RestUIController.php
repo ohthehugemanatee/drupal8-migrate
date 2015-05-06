@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Drupal\rest\Plugin\Type\ResourcePluginManager;
 use Drupal\restui\RestUIManager;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Routing\RouteBuilder;
+use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
 
 /**
@@ -45,7 +45,7 @@ class RestUIController implements ContainerInjectionInterface {
   /**
    * The route builder used to rebuild all routes.
    *
-   * @var \Drupal\Core\Routing\RouteBuilder
+   * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
   protected $routeBuilder;
 
@@ -64,7 +64,7 @@ class RestUIController implements ContainerInjectionInterface {
   /**
    * Constructs a RestUIController object.
    */
-  public function __construct(RestUIManager $restUIManager, ResourcePluginManager $resourcePluginManager, UrlGeneratorInterface $url_generator, RouteBuilder $routeBuilder) {
+  public function __construct(RestUIManager $restUIManager, ResourcePluginManager $resourcePluginManager, UrlGeneratorInterface $url_generator, RouteBuilderInterface $routeBuilder) {
     $this->restUIManager = $restUIManager;
     $this->resourcePluginManager = $resourcePluginManager;
     $this->urlGenerator = $url_generator;
@@ -87,7 +87,6 @@ class RestUIController implements ContainerInjectionInterface {
     $available_resources = array('enabled' => array(), 'disabled' => array());
     $resources = $this->resourcePluginManager->getDefinitions();
     foreach ($resources as $id => $resource) {
-      $plugin = $this->resourcePluginManager->getInstance(array('id' => $id));
       $status = in_array($id, $enabled_resources) ? 'enabled' : 'disabled';
       $available_resources[$status][$id] = $resource;
     }
@@ -147,7 +146,10 @@ class RestUIController implements ContainerInjectionInterface {
         $list[$status]['table']['#rows'][$id] = array(
           'data' => array(
             'name' => $resource['label'],
-            'path' => $uri_paths,
+            'path' =>  array('data' => array(
+              '#type' => 'inline_template',
+              '#template' => $uri_paths,
+            )),
             'description' => array(),
             'operations' => array(),
           )
@@ -159,7 +161,7 @@ class RestUIController implements ContainerInjectionInterface {
             '#links' => array(
               'enable' => array(
                 'title' => t('Enable'),
-                'url' => Url::fromUri('base://admin/structure/rest/resource/' . urlencode($id) . '/edit'),
+                'url' => Url::fromRoute('restui.edit', array('resource_id' => $id)),
               ),
             ),
           );
@@ -170,12 +172,12 @@ class RestUIController implements ContainerInjectionInterface {
             '#links' => array(
               'edit' => array(
                 'title' => t('Edit'),
-                'url' => Url::fromUri('base://admin/structure/rest/resource/' . urlencode($id) . '/edit'),
+                'url' => Url::fromRoute('restui.edit', array('resource_id' => $id)),
 
               ),
               'disable' => array(
                 'title' => t('Disable'),
-                'url' => Url::fromUri('base://admin/structure/rest/resource/' . urlencode($id) . '/disable', array('query' => array('token' => \Drupal::csrfToken()->get('restui_disable')))),
+                'url' => Url::fromRoute('restui.disable', array('resource_id' => $id), array('query' => array('token' => \Drupal::csrfToken()->get('restui_disable')))),
               ),
             ),
           );
@@ -213,12 +215,12 @@ class RestUIController implements ContainerInjectionInterface {
       throw new AccessDeniedHttpException();
     }
 
-    $resources = \Drupal::config('rest.settings')->get('resources') ?: array();
+    $config = \Drupal::configFactory()->getEditable('rest.settings');
+    $resources = $config->get('resources') ?: array();
     $plugin = $this->resourcePluginManager->getInstance(array('id' => $resource_id));
     if (!empty($plugin)) {
       // disable the resource.
       unset($resources[$resource_id]);
-      $config = \Drupal::config('rest.settings');
       $config->set('resources', $resources);
       $config->save();
 
