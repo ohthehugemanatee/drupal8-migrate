@@ -173,7 +173,7 @@ class CSV extends SourcePluginBase {
    *
    * @return void
    */
-  public function performRewind() {
+  public function rewind() {
     // Load up the first row, skipping the header(s) if necessary
     for ($i = 0; $i < $this->headerRows; $i++) {
       $this->getNextLine();
