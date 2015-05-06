@@ -5,7 +5,7 @@ migration_groups:
 
 source:
   plugin: csv
-  path: '/vagrant/import/ACS_13_1YR_B28002_with_ann.csv'
+  path: '/var/www/vhosts/dev.nodesymphony.com/cvst-backend/import/ACS_13_1YR_B28002_with_ann.csv'
   header_rows: 2
   fields:
     - Id2
