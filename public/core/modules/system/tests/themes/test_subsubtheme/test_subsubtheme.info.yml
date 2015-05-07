@@ -5,8 +5,8 @@ description: 'Test theme which uses test_subtheme as the base theme.'
 # core: 8.x
 base theme: test_subtheme
 
-# Information added by Drupal.org packaging script on 2015-03-25
-version: '8.0.0-beta9'
+# Information added by Drupal.org packaging script on 2015-04-29
+version: '8.0.0-beta10'
 core: '8.x'
 project: 'drupal'
-datestamp: 1427300653
+datestamp: 1430314871
