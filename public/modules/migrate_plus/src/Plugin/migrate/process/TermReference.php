@@ -55,8 +55,8 @@ class TermReference extends ProcessPluginBase implements ContainerFactoryPluginI
       foreach ($tree as $term) {
         $this->terms[$term->name->value] = $term->id();
       }
-      return $this->terms[$name];
     }
+    return $this->terms[$name];
   }
 
   /**
