@@ -1,0 +1,19 @@
+diff --git a/public/core/modules/migrate/src/MigrateExecutable.php b/public/core/modules/migrate/src/MigrateExecutable.php
+index 77c190b..f33781e 100644
+--- a/public/core/modules/migrate/src/MigrateExecutable.php
++++ b/public/core/modules/migrate/src/MigrateExecutable.php
+@@ -59,14 +59,6 @@ class MigrateExecutable implements MigrateExecutableInterface {
+    */
+   protected $totalProcessed;
+ 
+-  public function getTotalSuccesses() {
+-    return $this->totalSuccesses;
+-  }
+-
+-  public function getTotalProcessed() {
+-    return $this->totalProcessed;
+-  }
+-
+   /**
+    * The queued messages not yet saved.
+    *
