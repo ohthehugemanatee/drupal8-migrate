@@ -59,6 +59,14 @@ class MigrateExecutable implements MigrateExecutableInterface {
    */
   protected $totalProcessed;
 
+  public function getTotalSuccesses() {
+    return $this->totalSuccesses;
+  }
+
+  public function getTotalProcessed() {
+    return $this->totalProcessed;
+  }
+
   /**
    * The queued messages not yet saved.
    *
