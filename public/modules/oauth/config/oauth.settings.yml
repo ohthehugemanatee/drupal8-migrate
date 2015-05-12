@@ -1,2 +1,0 @@
-request_token_lifetime: '7200'
-login_path: 'user/login'
