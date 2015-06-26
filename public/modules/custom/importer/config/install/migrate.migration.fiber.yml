@@ -1,0 +1,32 @@
+id: fiber
+label: Fiber data importer
+migration_groups:
+  - US Census
+
+source:
+  plugin: csv
+  path: '/vagrant/import/ACS_13_1YR_B28002_with_ann.csv'
+  header_rows: 2
+  keys:
+    - Geography
+  customname: fiber
+
+process:
+  title:
+    plugin: concat
+    source:
+      - Geography
+      - customname
+    delimiter: :
+  field_fiber: Estimate; With an Internet subscription: - Fiber-optic:
+  field_state_term:
+    plugin: migration
+    migration: states
+    source:
+      - Geography
+  type:
+    plugin: default_value
+    default_value: fiber
+
+destination:
+  plugin: entity:node

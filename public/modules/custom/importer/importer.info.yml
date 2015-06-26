@@ -1,0 +1,9 @@
+name: Importer
+type: module
+description: My importer for US Census data that will be of great interest.
+core: 8.x
+package: Other
+dependencies:
+  - migrate
+  - migrate_plus
+

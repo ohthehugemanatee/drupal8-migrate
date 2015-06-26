@@ -1,0 +1,32 @@
+id: toilets
+label: Toilet data importer
+migration_groups:
+  - US Census
+
+source:
+  plugin: csv
+  path: '/vagrant/import/ACS_13_1YR_B25047_with_ann.csv'
+  header_rows: 2
+  keys:
+    - Geography
+  customname: toilets
+
+process:
+  title:
+    plugin: concat
+    source:
+      - Geography
+      - customname
+    delimiter: :
+  field_toilets: Estimate; Total: - Complete plumbing facilities
+  field_state_term:
+    plugin: migration
+    migration: states
+    source:
+      - Geography
+  type:
+    plugin: default_value
+    default_value: toilets
+
+destination:
+  plugin: entity:node

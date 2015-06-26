@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Contains importer.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function importer_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the importer module.
+    case 'help.page.importer':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('My importer for US Census data that will be of great interest.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function importer_theme() {
+  $theme = [];
+
+  return $theme;
+}

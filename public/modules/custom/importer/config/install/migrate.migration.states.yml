@@ -1,0 +1,20 @@
+id: states
+label: State data importer
+migration_groups:
+  - US Census
+
+source:
+  plugin: csv
+  path: '/vagrant/import/ACS_13_1YR_B28002_with_ann.csv'
+  header_rows: 2
+  keys:
+    - Geography
+
+process:
+  name: Geography
+  vid:
+    plugin: default_value
+    default_value: states
+
+destination:
+  plugin: entity:taxonomy_term

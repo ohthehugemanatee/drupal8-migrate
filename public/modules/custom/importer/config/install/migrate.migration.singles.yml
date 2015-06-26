@@ -1,0 +1,32 @@
+id: singles
+label: Singles data importer
+migration_groups:
+  - US Census
+
+source:
+  plugin: csv
+  path: '/vagrant/import/ACS_13_1YR_S1201_with_ann.csv'
+  header_rows: 2
+  keys:
+    - Geography
+  customname: singles
+
+process:
+  title:
+    plugin: concat
+    source:
+      - Geography
+      - customname
+    delimiter: :
+  field_singles: Never married; Estimate; Population 15 years and over
+  field_state_term:
+    plugin: migration
+    migration: states
+    source:
+      - Geography
+  type:
+    plugin: default_value
+    default_value: singles
+
+destination:
+  plugin: entity:node
